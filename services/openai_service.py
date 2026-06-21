@@ -13,6 +13,11 @@ class OpenAIQuestionClient:
 
     def generate(self, topic, count, difficulty, question_type, contexts):
         is_multiple_choice = question_type.strip().lower() == "multiple choice"
+        output_language = (
+            "Bangla"
+            if any("\u0980" <= character <= "\u09ff" for character in topic)
+            else "the same language as the topic"
+        )
         context_text = "\n\n".join(
             f"Source: {item['metadata'].get('source_file')} page {item['metadata'].get('page_number')}\n{item['text']}"
             for item in contexts
@@ -22,10 +27,13 @@ class OpenAIQuestionClient:
             "count": count,
             "difficulty": difficulty,
             "question_type": question_type,
+            "output_language": output_language,
             "retrieved_context": context_text,
             "rules": [
                 "Use only retrieved_context.",
-                "If context is insufficient, return an empty questions array.",
+                "Use context that explains the topic even if OCR introduced minor spelling errors.",
+                "Generate questions when the topic or a close spelling variant appears in the context.",
+                f"Write every question, answer, option, and explanation in {output_language}.",
                 "Include source_document for every question.",
                 (
                     "For Multiple Choice questions, include exactly four plausible options in an "

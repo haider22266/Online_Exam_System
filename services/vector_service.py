@@ -62,6 +62,9 @@ class VectorStoreService:
             return []
 
         lexical_results = self._lexical_query(collection, query_text, top_k)
+        if lexical_results:
+            return lexical_results
+
         query_embedding = self.embedding_model().encode([query_text], normalize_embeddings=True).tolist()[0]
         results = collection.query(
             query_embeddings=[query_embedding],
