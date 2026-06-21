@@ -40,6 +40,12 @@ class Config:
         "EMBEDDING_MODEL",
         "sentence-transformers/all-MiniLM-L6-v2",
     )
+    PDF_OCR_ENABLED = os.getenv("PDF_OCR_ENABLED", "true").lower() in {"1", "true", "yes", "on"}
+    PDF_OCR_LANGUAGES = os.getenv("PDF_OCR_LANGUAGES", "ben+eng")
+    PDF_OCR_DPI = int(os.getenv("PDF_OCR_DPI", "200"))
+    PDF_MIN_TEXT_CHARACTERS = int(os.getenv("PDF_MIN_TEXT_CHARACTERS", "40"))
+    TESSERACT_CMD = os.getenv("TESSERACT_CMD", "")
+    TESSERACT_DATA_DIR = os.getenv("TESSERACT_DATA_DIR", "")
     MAX_CONTENT_LENGTH = 64 * 1024 * 1024
     ALLOWED_EXTENSIONS = {"pdf", "docx", "pptx"}
 

@@ -1,3 +1,7 @@
+from difflib import SequenceMatcher
+import re
+import unicodedata
+
 from flask import current_app
 
 
@@ -56,6 +60,8 @@ class VectorStoreService:
         count = collection.count()
         if count == 0:
             return []
+
+        lexical_results = self._lexical_query(collection, query_text, top_k)
         query_embedding = self.embedding_model().encode([query_text], normalize_embeddings=True).tolist()[0]
         results = collection.query(
             query_embeddings=[query_embedding],
@@ -65,7 +71,7 @@ class VectorStoreService:
         documents = results.get("documents", [[]])[0]
         metadatas = results.get("metadatas", [[]])[0]
         distances = results.get("distances", [[]])[0]
-        return [
+        semantic_results = [
             {
                 "text": document,
                 "metadata": metadata,
@@ -73,3 +79,61 @@ class VectorStoreService:
             }
             for document, metadata, distance in zip(documents, metadatas, distances)
         ]
+        combined = []
+        seen = set()
+        for item in lexical_results + semantic_results:
+            identity = item["metadata"].get("chunk_id") or item["text"]
+            if identity in seen:
+                continue
+            seen.add(identity)
+            combined.append(item)
+            if len(combined) == top_k:
+                break
+        return combined
+
+    @staticmethod
+    def _tokens(text):
+        normalized = unicodedata.normalize("NFC", (text or "").casefold())
+        return re.findall(r"[^\W_]+", normalized, flags=re.UNICODE)
+
+    @classmethod
+    def _lexical_score(cls, query_text, document):
+        query_tokens = cls._tokens(query_text)
+        document_tokens = cls._tokens(document)
+        if not query_tokens or not document_tokens:
+            return 0
+
+        normalized_query = " ".join(query_tokens)
+        normalized_document = " ".join(document_tokens)
+        if normalized_query in normalized_document:
+            return 1
+
+        best_matches = [
+            max(SequenceMatcher(None, query_token, document_token).ratio() for document_token in document_tokens)
+            for query_token in query_tokens
+        ]
+        return sum(best_matches) / len(best_matches)
+
+    @classmethod
+    def _lexical_query(cls, collection, query_text, top_k):
+        stored = collection.get(
+            limit=min(collection.count(), 5000),
+            include=["documents", "metadatas"],
+        )
+        candidates = []
+        for document, metadata in zip(
+            stored.get("documents", []),
+            stored.get("metadatas", []),
+        ):
+            score = cls._lexical_score(query_text, document)
+            if score >= 0.55:
+                candidates.append(
+                    {
+                        "text": document,
+                        "metadata": metadata,
+                        "distance": None,
+                        "lexical_score": score,
+                    }
+                )
+        candidates.sort(key=lambda item: item["lexical_score"], reverse=True)
+        return candidates[:top_k]

@@ -7,7 +7,8 @@ Production-oriented Flask application for AI-powered exam question generation us
 - Admin and teacher login with hashed passwords and role checks.
 - Course CRUD and teacher assignment.
 - PDF, DOCX, and PPTX upload with metadata storage.
-- RAG indexing with `sentence-transformers/all-MiniLM-L6-v2` and ChromaDB.
+- Hybrid semantic and Unicode-aware lexical retrieval with ChromaDB.
+- OCR fallback for scanned Bengali/English PDFs.
 - OpenAI question generation constrained to retrieved course context.
 - Difficulty classifier training with TF-IDF and Random Forest.
 - Balanced exam builder and ReportLab PDF export.
@@ -37,6 +38,15 @@ Default users after `flask init-db`:
 ## OpenAI
 
 Set `OPENAI_API_KEY` in `.env` before generating questions. Upload and indexing can be tested without an OpenAI key.
+
+## Scanned Bangla PDFs
+
+Install Tesseract OCR and its Bengali (`ben`) language data. Ensure `tesseract`
+is on `PATH`, or set `TESSERACT_CMD` in `.env`. Scanned PDFs are OCR-processed
+with `ben+eng` by default. OCR can take several minutes for a large book.
+
+After changing the embedding model or enabling OCR, upload existing documents
+again so they are indexed with readable text and multilingual embeddings.
 
 ## SQL Server
 
