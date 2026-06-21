@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="page-title">Upload Course Material</h1>
+<form method="post" enctype="multipart/form-data" class="form-panel">
+  <label class="form-label">Course</label>
+  <select class="form-select mb-3" name="course_id" required>
+    {% for course in courses %}<option value="{{ course.id }}">{{ course.code }} - {{ course.title }}</option>{% endfor %}
+  </select>
+  <label class="form-label">PDF, DOCX, or PPTX</label>
+  <input class="form-control mb-3" type="file" name="file" accept=".pdf,.docx,.pptx" required>
+  <button class="btn btn-primary" type="submit">Upload and Index</button>
+</form>
+{% endblock %}

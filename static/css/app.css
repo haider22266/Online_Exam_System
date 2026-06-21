@@ -1,0 +1,71 @@
+body {
+  background: #f5f7fb;
+  color: #172033;
+}
+
+.page-title {
+  font-size: 1.7rem;
+  font-weight: 700;
+}
+
+.auth-shell {
+  min-height: calc(100vh - 80px);
+  display: grid;
+  place-items: center;
+}
+
+.auth-panel,
+.form-panel,
+.question-card {
+  background: #fff;
+  border: 1px solid #dfe5ef;
+  border-radius: 8px;
+  padding: 24px;
+  max-width: 720px;
+}
+
+.auth-panel {
+  width: min(420px, 100%);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.stat-card {
+  background: #fff;
+  border: 1px solid #dfe5ef;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.stat-card span {
+  display: block;
+  color: #657084;
+  font-size: .9rem;
+}
+
+.stat-card strong {
+  display: block;
+  font-size: 2rem;
+  line-height: 1.2;
+}
+
+.question-card {
+  max-width: none;
+  margin-bottom: 12px;
+}
+
+.exam-timer {
+  background: #172033;
+  color: #fff;
+  border-radius: 8px;
+  padding: 12px 18px;
+  font-size: 1.05rem;
+}
+
+.marks-input {
+  max-width: 140px;
+}

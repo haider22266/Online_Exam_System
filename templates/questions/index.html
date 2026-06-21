@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="page-title">Generated Questions</h1>
+  <a class="btn btn-primary" href="{{ url_for('questions.generate') }}">Generate Questions</a>
+</div>
+{% for question in questions %}
+<article class="question-card">
+  <div class="d-flex justify-content-between"><strong>{{ question.difficulty }} {{ question.question_type }}</strong><span>{{ question.course.code }}</span></div>
+  <p class="mb-1" style="white-space: pre-line;">{{ question.question }}</p>
+  <p class="mb-1"><strong>Answer:</strong> {{ question.answer }}</p>
+  <p class="small text-muted mb-0">Source: {{ question.source_document }} | Predicted: {{ question.predicted_difficulty or "Not trained" }}</p>
+</article>
+{% endfor %}
+{% endblock %}

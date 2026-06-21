@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="page-title">Exams</h1>
+  <a class="btn btn-primary" href="{{ url_for('exams.create') }}">Create Exam</a>
+</div>
+<table class="table table-hover">
+  <thead><tr><th>Title</th><th>Course</th><th>Type</th><th>Status</th><th>Total Marks</th><th></th></tr></thead>
+  <tbody>
+  {% for exam in exams %}
+  <tr>
+    <td>{{ exam.title }}</td>
+    <td>{{ exam.course.title }}</td>
+    <td>{{ exam.online_settings.exam_type|upper if exam.online_settings else "Offline" }}</td>
+    <td>{{ "Published" if exam.online_settings and exam.online_settings.is_published else "Draft" }}</td>
+    <td>{{ exam.total_marks }}</td>
+    <td class="text-end"><a class="btn btn-sm btn-outline-primary" href="{{ url_for('exams.detail', exam_id=exam.id) }}">Open</a></td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Student Exams{% endblock %}
+{% block content %}
+<h1 class="page-title mb-3">Available Online Exams</h1>
+{% if exams %}
+<div class="row g-3">
+  {% for exam in exams %}
+  {% set attempt = attempts.get(exam.id) %}
+  <div class="col-lg-6">
+    <article class="question-card h-100">
+      <div class="d-flex justify-content-between">
+        <strong>{{ exam.title }}</strong>
+        <span class="badge text-bg-primary">{{ exam.online_settings.exam_type|upper }}</span>
+      </div>
+      <p class="text-muted mb-2">{{ exam.course.title }}</p>
+      <p>{{ exam.total_marks }} marks · {{ exam.online_settings.duration_minutes }} minutes</p>
+      {% if not attempt %}
+      <form method="post" action="{{ url_for('student.start_exam', exam_id=exam.id) }}">
+        <button class="btn btn-primary" type="submit">Start Exam</button>
+      </form>
+      {% elif attempt.status == "in_progress" %}
+      <a class="btn btn-warning" href="{{ url_for('student.take_exam', attempt_id=attempt.id) }}">Continue Exam</a>
+      {% else %}
+      <a class="btn btn-outline-primary" href="{{ url_for('student.result', attempt_id=attempt.id) }}">View Result</a>
+      {% endif %}
+    </article>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">No online exams are currently published.</div>
+{% endif %}
+{% endblock %}

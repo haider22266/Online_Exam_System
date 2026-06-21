@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Exam Result{% endblock %}
+{% block content %}
+<h1 class="page-title">{{ attempt.exam.title }}</h1>
+<article class="question-card">
+  <p><strong>Status:</strong> {{ attempt.status|replace("_", " ")|title }}</p>
+  {% if attempt.status == "graded" %}
+  <p class="display-6">{{ attempt.score }} / {{ attempt.max_score }}</p>
+  {% else %}
+  <div class="alert alert-info mb-0">Your written answers were submitted and are waiting for teacher grading.</div>
+  {% endif %}
+</article>
+<a class="btn btn-outline-primary" href="{{ url_for('student.dashboard') }}">Back to Exams</a>
+{% endblock %}

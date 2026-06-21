@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}{{ attempt.exam.title }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h1 class="page-title">{{ attempt.exam.title }}</h1>
+    <div class="text-muted">{{ attempt.exam.course.title }} · {{ attempt.max_score }} marks</div>
+  </div>
+  <div class="exam-timer">Time left: <strong id="timer"></strong></div>
+</div>
+<form method="post" id="exam-form">
+  {% for question in questions %}
+  <article class="question-card">
+    <strong>Question {{ loop.index }} · {{ question.item.marks }} marks</strong>
+    <p class="mt-2">{{ question.stem }}</p>
+    {% if is_mcq %}
+      {% for option in question.options %}
+      <div class="form-check mb-2">
+        <input class="form-check-input" type="radio"
+               name="question_{{ question.item.id }}"
+               id="q{{ question.item.id }}_{{ option.label }}"
+               value="{{ option.value }}">
+        <label class="form-check-label" for="q{{ question.item.id }}_{{ option.label }}">
+          <strong>{{ option.label }}.</strong> {{ option.text }}
+        </label>
+      </div>
+      {% endfor %}
+    {% else %}
+      <textarea class="form-control" name="question_{{ question.item.id }}" rows="7" placeholder="Write your answer here"></textarea>
+    {% endif %}
+  </article>
+  {% endfor %}
+  <button class="btn btn-success" type="submit" onclick="return confirm('Submit this exam? You cannot attempt it again.')">Submit Exam</button>
+</form>
+<script>
+  let remaining = {{ remaining_seconds }};
+  const timer = document.getElementById("timer");
+  const form = document.getElementById("exam-form");
+  function updateTimer() {
+    const minutes = Math.floor(remaining / 60);
+    const seconds = remaining % 60;
+    timer.textContent = `${minutes}:${String(seconds).padStart(2, "0")}`;
+    if (remaining <= 0) {
+      form.submit();
+      return;
+    }
+    remaining -= 1;
+    window.setTimeout(updateTimer, 1000);
+  }
+  updateTimer();
+</script>
+{% endblock %}

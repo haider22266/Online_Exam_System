@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h1 class="page-title">{{ exam.title }}</h1>
+    <div class="text-muted">
+      {{ exam.course.title }} | {{ exam.total_marks }} marks
+      {% if exam.online_settings %}
+        | {{ exam.online_settings.exam_type|upper }}
+        | {{ exam.online_settings.duration_minutes }} minutes
+        | {{ "Published" if exam.online_settings.is_published else "Draft" }}
+      {% endif %}
+    </div>
+  </div>
+  <div class="btn-group">
+    {% if exam.online_settings %}
+    <form method="post" action="{{ url_for('exams.publish', exam_id=exam.id) }}">
+      <button class="btn btn-outline-success" type="submit">{{ "Unpublish" if exam.online_settings.is_published else "Publish" }}</button>
+    </form>
+    <a class="btn btn-outline-dark" href="{{ url_for('exams.attempts', exam_id=exam.id) }}">Student Attempts</a>
+    {% endif %}
+    <a class="btn btn-outline-primary" href="{{ url_for('exams.paper_pdf', exam_id=exam.id) }}">Exam PDF</a>
+    <a class="btn btn-outline-secondary" href="{{ url_for('exams.answers_pdf', exam_id=exam.id) }}">Answer PDF</a>
+  </div>
+</div>
+{% for item in exam.exam_questions|sort(attribute='sort_order') %}
+<article class="question-card">
+  <strong>{{ item.sort_order }}. {{ item.question.difficulty }} | {{ item.marks }} marks</strong>
+  <p style="white-space: pre-line;">{{ item.question.question }}</p>
+</article>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="page-title">{{ "Edit" if course else "New" }} Course</h1>
+<form method="post" class="form-panel">
+  <label class="form-label">Title</label>
+  <input class="form-control mb-3" name="title" value="{{ course.title if course else '' }}" required>
+  <label class="form-label">Code</label>
+  <input class="form-control mb-3" name="code" value="{{ course.code if course else '' }}" required>
+  <label class="form-label">Description</label>
+  <textarea class="form-control mb-3" name="description" rows="4">{{ course.description if course else '' }}</textarea>
+  <label class="form-label">Teacher</label>
+  <select class="form-select mb-3" name="teacher_id">
+    <option value="">Unassigned</option>
+    {% for teacher in teachers %}
+    <option value="{{ teacher.id }}" {% if course and course.teacher_id == teacher.id %}selected{% endif %}>{{ teacher.name }}</option>
+    {% endfor %}
+  </select>
+  <button class="btn btn-primary" type="submit">Save</button>
+</form>
+{% endblock %}

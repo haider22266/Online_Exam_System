@@ -1,0 +1,10 @@
+question,difficulty
+"Define supervised learning.",Easy
+"What is a primary key in a relational database?",Easy
+"Explain the purpose of normalization.",Medium
+"Compare precision and recall using a classification example.",Medium
+"Design a transaction strategy for concurrent account transfers.",Hard
+"Analyze the time complexity of merge sort and justify the recurrence.",Hard
+"What does HTTP status code 404 mean?",Easy
+"Explain how TF-IDF weights terms in document retrieval.",Medium
+"Write pseudocode for Dijkstra's algorithm and discuss edge cases.",Hard

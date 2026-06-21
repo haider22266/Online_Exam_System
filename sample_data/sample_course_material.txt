@@ -1,0 +1,3 @@
+This sample text can be converted to PDF and uploaded during manual testing.
+
+Retrieval-Augmented Generation combines search over trusted source material with a language model. The application extracts course documents, splits text into overlapping chunks, embeds each chunk, stores it in ChromaDB, retrieves relevant chunks for a teacher's topic, and asks OpenAI to generate questions strictly from those chunks.

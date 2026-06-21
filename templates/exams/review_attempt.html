@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="page-title">{{ attempt.student.name }} — {{ attempt.exam.title }}</h1>
+<p class="text-muted">Status: {{ attempt.status|title }} · Score: {{ attempt.score if attempt.score is not none else "Pending" }} / {{ attempt.max_score }}</p>
+<form method="post">
+  {% for answer in answers %}
+  <article class="question-card">
+    <strong>Question {{ answer.exam_question.sort_order }} · Maximum {{ answer.exam_question.marks }} marks</strong>
+    <p class="mt-2" style="white-space: pre-line;">{{ answer.exam_question.question.question }}</p>
+    <div class="p-3 bg-light border rounded mb-3" style="white-space: pre-line;">
+      {{ answer.answer_text or "No answer submitted." }}
+    </div>
+    {% if attempt.exam.online_settings.exam_type == "written" %}
+    <label class="form-label">Awarded marks</label>
+    <input class="form-control marks-input" type="number" name="marks_{{ answer.id }}"
+           min="0" max="{{ answer.exam_question.marks }}"
+           value="{{ answer.awarded_marks if answer.awarded_marks is not none else 0 }}" required>
+    {% else %}
+    <p><strong>Correct answer:</strong> {{ answer.exam_question.question.answer }}</p>
+    <p><strong>Result:</strong> {{ "Correct" if answer.is_correct else "Incorrect" }}</p>
+    {% endif %}
+  </article>
+  {% endfor %}
+  {% if attempt.exam.online_settings.exam_type == "written" and attempt.status in ["submitted", "graded"] %}
+  <button class="btn btn-success" type="submit">Save Grades</button>
+  {% endif %}
+</form>
+{% endblock %}

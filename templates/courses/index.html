@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="page-title">Courses</h1>
+  {% if current_user.role == "admin" %}<a class="btn btn-primary" href="{{ url_for('courses.create') }}">New Course</a>{% endif %}
+</div>
+<div class="table-responsive">
+  <table class="table table-hover align-middle">
+    <thead><tr><th>Code</th><th>Title</th><th>Teacher</th><th></th></tr></thead>
+    <tbody>
+    {% for course in courses %}
+      <tr>
+        <td>{{ course.code }}</td>
+        <td>{{ course.title }}</td>
+        <td>{{ course.teacher.name if course.teacher else "Unassigned" }}</td>
+        <td class="text-end">
+          {% if current_user.role == "admin" %}
+          <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('courses.edit', course_id=course.id) }}">Edit</a>
+          <form class="d-inline" method="post" action="{{ url_for('courses.delete', course_id=course.id) }}">
+            <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
