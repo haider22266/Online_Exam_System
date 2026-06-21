@@ -5,15 +5,18 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from extensions import db
 
+UnicodeString = db.Unicode
+UnicodeText = db.UnicodeText
+
 
 class User(UserMixin, db.Model):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), nullable=False)
-    email = db.Column(db.String(255), unique=True, nullable=False, index=True)
-    password_hash = db.Column(db.String(255), nullable=False)
-    role = db.Column(db.String(20), nullable=False, default="teacher")
+    name = db.Column(UnicodeString(120), nullable=False)
+    email = db.Column(UnicodeString(255), unique=True, nullable=False, index=True)
+    password_hash = db.Column(UnicodeString(255), nullable=False)
+    role = db.Column(UnicodeString(20), nullable=False, default="teacher")
     is_active_flag = db.Column(db.Boolean, nullable=False, default=True)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
@@ -37,9 +40,9 @@ class Course(db.Model):
     __tablename__ = "courses"
 
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(200), nullable=False)
-    code = db.Column(db.String(50), unique=True, nullable=False)
-    description = db.Column(db.Text)
+    title = db.Column(UnicodeString(200), nullable=False)
+    code = db.Column(UnicodeString(50), unique=True, nullable=False)
+    description = db.Column(UnicodeText)
     teacher_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
@@ -55,13 +58,13 @@ class Document(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     course_id = db.Column(db.Integer, db.ForeignKey("courses.id"), nullable=False, index=True)
-    original_filename = db.Column(db.String(255), nullable=False)
-    stored_filename = db.Column(db.String(255), nullable=False)
-    file_path = db.Column(db.String(500), nullable=False)
-    file_type = db.Column(db.String(20), nullable=False)
+    original_filename = db.Column(UnicodeString(255), nullable=False)
+    stored_filename = db.Column(UnicodeString(255), nullable=False)
+    file_path = db.Column(UnicodeString(500), nullable=False)
+    file_type = db.Column(UnicodeString(20), nullable=False)
     page_count = db.Column(db.Integer, default=0)
-    status = db.Column(db.String(30), nullable=False, default="uploaded")
-    error_message = db.Column(db.Text)
+    status = db.Column(UnicodeString(30), nullable=False, default="uploaded")
+    error_message = db.Column(UnicodeText)
     uploaded_by_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
@@ -77,10 +80,10 @@ class Chunk(db.Model):
     course_id = db.Column(db.Integer, db.ForeignKey("courses.id"), nullable=False, index=True)
     document_id = db.Column(db.Integer, db.ForeignKey("documents.id"), nullable=False, index=True)
     chunk_index = db.Column(db.Integer, nullable=False)
-    source_file = db.Column(db.String(255), nullable=False)
+    source_file = db.Column(UnicodeString(255), nullable=False)
     page_number = db.Column(db.Integer, nullable=True)
-    chunk_text = db.Column(db.Text, nullable=False)
-    chroma_id = db.Column(db.String(255), unique=True, nullable=False)
+    chunk_text = db.Column(UnicodeText, nullable=False)
+    chroma_id = db.Column(UnicodeString(255), unique=True, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     course = db.relationship("Course", back_populates="chunks")
@@ -91,10 +94,10 @@ class Question(db.Model):
     __tablename__ = "questions"
 
     id = db.Column(db.Integer, primary_key=True)
-    text = db.Column(db.Text, nullable=False)
-    answer = db.Column(db.Text, nullable=False)
-    difficulty = db.Column(db.String(20), nullable=False)
-    question_type = db.Column(db.String(40), nullable=False)
+    text = db.Column(UnicodeText, nullable=False)
+    answer = db.Column(UnicodeText, nullable=False)
+    difficulty = db.Column(UnicodeString(20), nullable=False)
+    question_type = db.Column(UnicodeString(40), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
 
@@ -103,14 +106,14 @@ class GeneratedQuestion(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     course_id = db.Column(db.Integer, db.ForeignKey("courses.id"), nullable=False, index=True)
-    question = db.Column(db.Text, nullable=False)
-    answer = db.Column(db.Text, nullable=False)
-    explanation = db.Column(db.Text)
-    difficulty = db.Column(db.String(20), nullable=False)
-    predicted_difficulty = db.Column(db.String(20))
-    question_type = db.Column(db.String(40), nullable=False)
-    source_document = db.Column(db.String(255))
-    source_chunk_ids = db.Column(db.Text)
+    question = db.Column(UnicodeText, nullable=False)
+    answer = db.Column(UnicodeText, nullable=False)
+    explanation = db.Column(UnicodeText)
+    difficulty = db.Column(UnicodeString(20), nullable=False)
+    predicted_difficulty = db.Column(UnicodeString(20))
+    question_type = db.Column(UnicodeString(40), nullable=False)
+    source_document = db.Column(UnicodeString(255))
+    source_chunk_ids = db.Column(UnicodeText)
     created_by_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
@@ -123,7 +126,7 @@ class Exam(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     course_id = db.Column(db.Integer, db.ForeignKey("courses.id"), nullable=False, index=True)
-    title = db.Column(db.String(200), nullable=False)
+    title = db.Column(UnicodeString(200), nullable=False)
     total_marks = db.Column(db.Integer, nullable=False, default=0)
     created_by_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
@@ -167,7 +170,7 @@ class OnlineExamSettings(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     exam_id = db.Column(db.Integer, db.ForeignKey("exams.id"), unique=True, nullable=False, index=True)
-    exam_type = db.Column(db.String(20), nullable=False)
+    exam_type = db.Column(UnicodeString(20), nullable=False)
     duration_minutes = db.Column(db.Integer, nullable=False, default=30)
     is_published = db.Column(db.Boolean, nullable=False, default=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
@@ -184,7 +187,7 @@ class StudentExamAttempt(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     exam_id = db.Column(db.Integer, db.ForeignKey("exams.id"), nullable=False, index=True)
     student_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False, index=True)
-    status = db.Column(db.String(20), nullable=False, default="in_progress")
+    status = db.Column(UnicodeString(20), nullable=False, default="in_progress")
     started_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     submitted_at = db.Column(db.DateTime)
     score = db.Column(db.Integer)
@@ -218,7 +221,7 @@ class StudentExamAnswer(db.Model):
         nullable=False,
         index=True,
     )
-    answer_text = db.Column(db.Text)
+    answer_text = db.Column(UnicodeText)
     awarded_marks = db.Column(db.Integer)
     is_correct = db.Column(db.Boolean)
 
